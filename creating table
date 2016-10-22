@@ -1,0 +1,72 @@
+// Following are code used for creating table in database
+
+
+CREATE TABLE accounts(
+id INT PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(20) NOT NULL UNIQUE,
+reputation INT DEFAULT 0,
+password VARCHAR(255) NOT NULL
+);
+
+
+CREATE TABLE friends(
+id_1 INT REFERENCES accounts(id) ON DELETE CASCADE,
+id_2 INT REFERENCES accounts(id) ON DELETE CASCADE,
+PRIMARY KEY(id_1,id_2),
+CHECK (id_1<id_2)
+);
+
+CREATE TABLE subsaiddits(
+id INT  PRIMARY KEY AUTO_INCREMENT,
+title  VARCHAR(50) NOT NULL UNIQUE,
+description TEXT,
+creator INT REFERENCES accounts(id) ON DELETE CASCADE,
+is_default BIT NOT NULL DEFAULT 0,
+create_time DATETIME NOT NULL
+);
+
+CREATE TABLE subscribes(
+user_id INT REFERENCES accounts(id) ON DELETE CASCADE,
+subsaiddit_id INT REFERENCES subsaiddits(id) ON DELETE CASCADE
+);
+
+CREATE TABLE posts(
+id INT AUTO_INCREMENT PRIMARY KEY,
+text TEXT NOT NULL,
+time_pub  DATETIME NOT NULL,
+time_edit DATETIME,
+title VARCHAR(255) NOT NULL,
+url VARCHAR(255),
+upvotes INT,
+downvotes INT,
+creator  INT REFERENCES accounts(id) ON DELETE CASCADE, 
+subsaiddit_id INT REFERENCES subsaiddits(id) ON DELETE CASCADE
+);
+
+CREATE TABLE favourite_posts(
+user_id INT REFERENCES accounts(id) ON DELETE CASCADE,
+post_id INT REFERENCES posts(id) ON DELETE CASCADE
+);
+
+CREATE TABLE comments(
+id INT AUTO_INCREMENT PRIMARY KEY,
+create_time DATETIME NOT NULL,
+text TEXT,
+post INT REFERENCES posts(id) ON DELETE CASCADE,
+creator INT REFERENCES accounts(id) ON DELETE CASCADE,
+reply INT REFERENCES comments(id) ON DELETE CASCADE
+);
+
+CREATE TABLE comment_reactions(
+comment_id INT REFERENCES comments(id),
+user_id INT REFERENCES accounts(id),
+PRIMARY KEY(comment_id,user_id),
+reaction INT CHECK (reaction=-1 OR reaction=0 OR reaction=1)
+);
+
+CREATE TABLE post_reactions(
+post_id INT REFERENCES posts(id),
+user_id INT REFERENCES accounts(id),
+PRIMARY KEY(post_id,user_id),
+reaction INT CHECK (reaction=-1 OR reaction=0 OR reaction=1)
+);
