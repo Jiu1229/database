@@ -1,3 +1,3 @@
-# database
+# SQL,ER diagram
 
-These files are data base related work i have done so far
+These files are database course project work i have done so far
